@@ -11,6 +11,10 @@ gem 'puma', '~> 3.11'
 gem 'uglifier', '>= 1.3.0'
 gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
+gem 'googleauth'
+gem 'google-api-client'
+gem 'dotenv-rails'
+gem 'google_drive'
 
 group :development, :test do
   gem 'pry'
