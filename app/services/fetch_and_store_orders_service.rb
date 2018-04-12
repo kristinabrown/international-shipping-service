@@ -4,7 +4,7 @@ class FetchAndStoreOrdersService
   def save_international_orders_to_csv
     headers = ['OrderID','BusinessName','FullName','Address1','Address2','ZIP','City','State','CountryISOCode','Item','Quantity']
 
-    file = File.new("tmp/international_orders_#{Date.today}.csv")
+    file = File.new("international_orders_#{Date.today}.csv")
 
     CSV.open(file, 'w') do |csv|
       csv << headers
