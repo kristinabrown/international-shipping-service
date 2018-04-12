@@ -2,26 +2,20 @@ require 'csv'
 class FetchAndStoreOrdersService
 
   def save_international_orders_to_csv
-    headers = ['OrderID','BusinessName','FullName','Address1','Address2','ZIP','City','State','CountryISOCode','Item','Quantity']
-
-    file = File.new("international_orders_#{Date.today}.csv")
-
-    CSV.open(file, 'w') do |csv|
-      csv << headers
-      pending_international_orders.each do |order|
-        order['lineItems'].each do |item|
-          csv << order_row(order, item)
-        end
+    io = StringIO.new
+    pending_international_orders.each do |order|
+      order['lineItems'].each do |item|
+        io.write(order_row(order, item))
       end
     end
 
-    upload_to_google_driv(file.path)
+    upload_to_google_drive(io)
   end
 
   private
 
-  def upload_to_google_driv(path)
-    GoogleDriveService.new.upload_addresses(file_path)
+  def upload_to_google_drive(path)
+    GoogleDriveService.new.upload_addresses(path)
   end
 
   def connection
