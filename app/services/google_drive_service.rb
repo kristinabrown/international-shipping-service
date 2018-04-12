@@ -2,7 +2,7 @@ class GoogleDriveService
   attr_reader :session
 
   def initialize
-    @session = GoogleDrive::Session.from_config("config.json")
+    @session = GoogleDrive::Session.from_config(ENV['GOOGLE_CLIENT_SECRETS'])
   end
 
   def upload_addresses(io)
