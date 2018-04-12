@@ -14,8 +14,8 @@ class FetchAndStoreOrdersService
 
   private
 
-  def upload_to_google_drive(path)
-    GoogleDriveService.new.upload_addresses(path)
+  def upload_to_google_drive(io)
+    GoogleDriveService.new.upload_addresses(io)
   end
 
   def connection
