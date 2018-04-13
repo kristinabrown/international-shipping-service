@@ -1,15 +1,42 @@
 require 'csv'
 class FetchAndStoreOrdersService
+  attr_accessor :fulfilled_orders
 
-  def save_international_orders_to_csv
+  BOOK_SKUS = [
+    'SQ7518949',
+    'SQ5328310',
+    'SQ4268897'
+  ]
+
+  def initialize
+    @fulfilled_orders = []
+  end
+
+  def fetch_and_send_orders
     io = StringIO.new
+    io.write("OrderID,Business Name,Full Name,Address 1,Address 2,ZIP,City,State,CountryISOCode,Item,Quantity,Email,Telephone\n")
     pending_international_orders.each do |order|
+      #check all line items sku and return if any are not within book skus
       order['lineItems'].each do |item|
-        io.write(order_row(order, item))
+        io.write(order_row(order, item)) if BOOK_SKUS.include?(item["sku"])
       end
+      fulfilled_orders << order['id']
+      # have a database with orders that are sent to heftwerk, track if they are uploaded when that happened, and when they were marked fulfilled
     end
 
     upload_to_google_drive(io)
+    change_status_fulfilled(fulfilled_orders)
+  end
+
+  def change_status_fulfilled(fo)
+    fo.each do |o_id|
+      # response = connection.post do |req|
+      #   req.url "1.0/commerce/orders/#{o_id}/fulfillments"
+      #   req.headers['Content-Type'] = 'application/json'
+      #   req.headers['Authorization'] = "Bearer #{api_token}"
+      #   req.body = {"shouldSendNotification":false,"shipments":[{ "shipDate": Time.current.to_s,"carrierName":"Heftwerk","service":"","trackingNumber": "","trackingUrl": ''}]}.to_json
+      # end
+    end
   end
 
   private
@@ -29,6 +56,7 @@ class FetchAndStoreOrdersService
 
     response = connection.get do |req|
       req.url '1.0/commerce/orders'
+      req.params['fulfillmentStatus'] = 'PENDING'
       req.headers['Content-Type'] = 'application/json'
       req.headers['Authorization'] = "Bearer #{api_token}"
     end
@@ -46,9 +74,22 @@ class FetchAndStoreOrdersService
   def order_row(order, item)
     address = order['shippingAddress']
     business_name = ''
-    [order['id'],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['productId'],item['quantity']].map do |value|
-      value ? value.to_s[0..70] : ''
-    end
+    [order['id'],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['productId'],item['quantity'],order['customerEmail'],address['phone']].map do |value|
+      value ? value.to_s[0..70].gsub(',', '') : ''
+    end.join(',') + "\n"
   end
 
 end
+
+# connection.post do |req|
+#  req.url "/commerce/orders/5abbb67c03ce649f5bbd141d/fulfillments"
+#  req.headers['Content-Type'] = 'application/json'
+#  req.headers['Authorization'] = "Bearer #{api_token}"
+#  req.body = {"shouldSendNotification":false,"shipments":[{ "shipDate": Time.current.to_s,"carrierName":"Heftwerk","service":"overnight","trackingNumber": "","trackingUrl": ''}]}.to_json
+# end
+#
+# response = connection.get do |req|
+#   req.url "1.0/commerce/orders/5abbb67c03ce649f5bbd141d"
+#   req.headers['Content-Type'] = 'application/json'
+#   req.headers['Authorization'] = "Bearer #{api_token}"
+# end
