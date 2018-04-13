@@ -1,4 +1,3 @@
-require 'csv'
 class FetchAndStoreOrdersService
   attr_accessor :fulfilled_orders
 
@@ -37,6 +36,7 @@ class FetchAndStoreOrdersService
       #   req.body = {"shouldSendNotification":false,"shipments":[{ "shipDate": Time.current.to_s,"carrierName":"Heftwerk","service":"","trackingNumber": "","trackingUrl": ''}]}.to_json
       # end
     end
+    fo.count
   end
 
   private
