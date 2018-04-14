@@ -5,15 +5,15 @@
   </head>
   <body>
     <h1>Orders Sent to Heftwerk on: <%= Time.current.strftime('%A, %d %b %Y %l:%M %p') %></h1>
-    <h2>Orders were automatically fulfilled in Squarespace: <bold><%= @automatically_fulfilled %></bold></h2>
+    <h2>Orders were automatically fulfilled in Squarespace: <bold color="red"><%= @automatically_fulfilled %></bold></h2>
     <p>
-      Order count: <%= @orders.count %>
-      Order ids: <% @orders.each do |o| %>
+      <h2>Order count: <%= @orders.count %></h2><br>
+      <h3>Order ids:</h3> <% @orders.each do |o| %>
       <p><%= o %></p>
       <% end %>
     <p>
-      Item count: <%= @items.count %>
-      Items: <% @items.each do |i| %>
+      <h2>Item count: <bold><%= @items.count %></bold></h2><br>
+      <h3>Items:</h3> <% @items.each do |i| %>
       <p><%= i %></p>
       <% end %>
     </p>

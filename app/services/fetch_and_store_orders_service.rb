@@ -21,23 +21,24 @@ class FetchAndStoreOrdersService
         io.write(order_row(order, item)) if BOOK_SKUS.include?(item["sku"])
         fulfilled_items << [item['productId'], item['productName']]
       end
-      fulfilled_orders << order['id']
-      # have a database with orders that are sent to heftwerk, track if they are uploaded when that happened, and when they were marked fulfilled
+      order_object = Order.create(order_id: order['id'], items: order['lineItems'], uploaded_at: Time.current)
+      fulfilled_orders << order_object
     end
 
     upload_to_google_drive(io)
     change_status_fulfilled(fulfilled_orders)
-    OrderMailer.with(orders: fulfilled_orders, items: fulfilled_items, automatically_fulfilled: false).orders_report_email.deliver_now
+    OrderMailer.with(orders: fulfilled_orders.map(&:order_id), items: fulfilled_items, automatically_fulfilled: false).orders_report_email.deliver_now
   end
 
   def change_status_fulfilled(fo)
-    fo.each do |o_id|
+    fo.each do |o|
       # response = connection.post do |req|
-      #   req.url "1.0/commerce/orders/#{o_id}/fulfillments"
+      #   req.url "1.0/commerce/orders/#{o.order_id}/fulfillments"
       #   req.headers['Content-Type'] = 'application/json'
       #   req.headers['Authorization'] = "Bearer #{api_token}"
       #   req.body = {"shouldSendNotification":false,"shipments":[{ "shipDate": Time.current.to_s,"carrierName":"Heftwerk","service":"","trackingNumber": "","trackingUrl": ''}]}.to_json
       # end
+      # o.update(fulfilled_at: Time.current)
     end
     fo.count
   end
