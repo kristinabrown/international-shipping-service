@@ -1,5 +1,4 @@
 class OrderMailer < ApplicationMailer
-  default to: -> { 'kristina.frey.frey@gmail.com' }
   default cc: -> { 'kristina.frey.frey@gmail.com' }
 
   def orders_report_email
@@ -7,6 +6,6 @@ class OrderMailer < ApplicationMailer
     @items = params[:items]
     @automatically_fulfilled = params[:automatically_fulfilled]
 
-    mail(to: 'kristina.frey.frey@gmail.com', subject: 'Orders sent to Heftwerk')
+    mail(to: 'bigabeano@yahoo.com', subject: 'Orders sent to Heftwerk')
   end
 end
