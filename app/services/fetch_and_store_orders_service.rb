@@ -16,13 +16,14 @@ class FetchAndStoreOrdersService
     io = StringIO.new
     io.write("OrderID,Business Name,Full Name,Address 1,Address 2,ZIP,City,State,CountryISOCode,Item,Quantity,Email,Telephone\n")
     pending_international_orders.each do |order|
-      #check all line items sku and return if any are not within book skus
-      order['lineItems'].each do |item|
-        io.write(order_row(order, item)) if BOOK_SKUS.include?(item["sku"])
-        fulfilled_items << [item['productId'], item['productName']]
+      if order['lineItems'].map { |li| li["sku"] }.uniq - BOOK_SKUS == []
+        order['lineItems'].each do |item|
+          io.write(order_row(order, item)) if BOOK_SKUS.include?(item["sku"])
+          fulfilled_items << [item['productId'], item['productName']]
+        end
+        order_object = Order.create(order_id: order['id'], items: order['lineItems'], uploaded_at: Time.current)
+        fulfilled_orders << order_object
       end
-      order_object = Order.create(order_id: order['id'], items: order['lineItems'], uploaded_at: Time.current)
-      fulfilled_orders << order_object
     end
 
     upload_to_google_drive(io)
