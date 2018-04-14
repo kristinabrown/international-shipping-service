@@ -1,5 +1,5 @@
 class FetchAndStoreOrdersService
-  attr_accessor :fulfilled_orders
+  attr_accessor :fulfilled_orders, :fulfilled_items
 
   BOOK_SKUS = [
     'SQ7518949',
@@ -9,6 +9,7 @@ class FetchAndStoreOrdersService
 
   def initialize
     @fulfilled_orders = []
+    @fulfilled_items = []
   end
 
   def fetch_and_send_orders
@@ -18,6 +19,7 @@ class FetchAndStoreOrdersService
       #check all line items sku and return if any are not within book skus
       order['lineItems'].each do |item|
         io.write(order_row(order, item)) if BOOK_SKUS.include?(item["sku"])
+        fulfilled_items << [item['productId'], item['productName']]
       end
       fulfilled_orders << order['id']
       # have a database with orders that are sent to heftwerk, track if they are uploaded when that happened, and when they were marked fulfilled
@@ -25,6 +27,7 @@ class FetchAndStoreOrdersService
 
     upload_to_google_drive(io)
     change_status_fulfilled(fulfilled_orders)
+    OrderMailer.with(orders: fulfilled_orders, items: fulfilled_items, automatically_fulfilled: false).orders_report_email.deliver_now
   end
 
   def change_status_fulfilled(fo)
