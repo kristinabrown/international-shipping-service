@@ -28,18 +28,33 @@ class FetchAndStoreOrdersService
 
     upload_to_google_drive(io)
     change_status_fulfilled(fulfilled_orders)
-    OrderMailer.with(orders: fulfilled_orders.map(&:order_id), items: fulfilled_items, automatically_fulfilled: false).orders_report_email.deliver_now
+    OrderMailer.with(orders: fulfilled_orders.map(&:order_id), items: fulfilled_items, automatically_fulfilled: true).orders_report_email.deliver_now
   end
 
   def change_status_fulfilled(fo)
+    api_token = ENV['SQUARE_SPACE_TOKEN']
+
+    conn = Faraday.new(url: 'https://api.squarespace.com/1.0/commerce/orders') do |faraday|
+        faraday.request  :url_encoded
+        faraday.adapter  Faraday.default_adapter
+      end
+
     fo.each do |o|
-      # response = connection.post do |req|
-      #   req.url "1.0/commerce/orders/#{o.order_id}/fulfillments"
-      #   req.headers['Content-Type'] = 'application/json'
-      #   req.headers['Authorization'] = "Bearer #{api_token}"
-      #   req.body = {"shouldSendNotification":false,"shipments":[{ "shipDate": Time.current.to_s,"carrierName":"Heftwerk","service":"","trackingNumber": "","trackingUrl": ''}]}.to_json
-      # end
-      # o.update(fulfilled_at: Time.current)
+      shipment = {
+        "carrierName": 'Heftwerk',
+        "service": "standard",
+        "shipDate": "#{Time.now.utc.iso8601}",
+        "trackingNumber": '123',
+        "trackingUrl": nil
+      }
+
+      response = conn.post do |req|
+        req.headers['Content-Type'] = 'application/json'
+        req.headers['Authorization'] = "Bearer #{api_token}"
+        req.url "#{o.order_id}/fulfillments"
+        req.body = req.body = {"shipments":[shipment],"shouldSendNotification": false}.to_json
+      end
+      o.update(fulfilled_at: Time.current) if response.success?
     end
     fo.count
   end
@@ -85,16 +100,4 @@ class FetchAndStoreOrdersService
   end
 
 end
-
-# connection.post do |req|
-#  req.url "/commerce/orders/5abbb67c03ce649f5bbd141d/fulfillments"
-#  req.headers['Content-Type'] = 'application/json'
-#  req.headers['Authorization'] = "Bearer #{api_token}"
-#  req.body = {"shouldSendNotification":false,"shipments":[{ "shipDate": Time.current.to_s,"carrierName":"Heftwerk","service":"overnight","trackingNumber": "","trackingUrl": ''}]}.to_json
-# end
-#
-# response = connection.get do |req|
-#   req.url "1.0/commerce/orders/5abbb67c03ce649f5bbd141d"
-#   req.headers['Content-Type'] = 'application/json'
-#   req.headers['Authorization'] = "Bearer #{api_token}"
-# end
+# 5abbb67c03ce649f5bbd141d
