@@ -8,13 +8,13 @@
     <p>
       <h2>Order count: <%= @orders.count %></h2><br>
       <h3>Order ids:</h3> <% @orders.each do |o| %>
-      <p><%= o.id %>   marked fulfilled: <%= o.fulfilled_at.present? %>
+      <p><%= o.order_id %>   marked fulfilled: <%= o.fulfilled_at.present? %>
       -----
       <% end %>
     <p>
       <h2>Item count: <bold><%= @items.count %></bold></h2><br>
       <h3>Items:</h3> <% @items.each do |i| %>
-      <p><%= i %></p>
+      <p>id: <%= i[0] %>---> <%= i[1] %></p>
       <% end %>
     </p>
   </body>

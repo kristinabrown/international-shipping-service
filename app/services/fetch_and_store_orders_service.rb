@@ -13,20 +13,20 @@ class FetchAndStoreOrdersService
   end
 
   def fetch_and_send_orders
-    io = StringIO.new
-    io.write("OrderID,Business Name,Full Name,Address 1,Address 2,ZIP,City,State,CountryISOCode,Item,Quantity,Email,Telephone\n")
-    pending_international_orders.each do |order|
+    line_items = []
+    mapped_orders = pending_international_orders.each do |order|
       if order['lineItems'].map { |li| li["sku"] }.uniq - BOOK_SKUS == []
-        order['lineItems'].each do |item|
-          io.write(order_row(order, item)) if BOOK_SKUS.include?(item["sku"])
+        order['lineItems'].map do |item|
+          line_items << order_row(order, item) if BOOK_SKUS.include?(item["sku"])
           fulfilled_items << [item['productId'], item['productName']]
         end
         order_object = Order.create(order_id: order['id'], items: order['lineItems'], uploaded_at: Time.current)
         fulfilled_orders << order_object
       end
     end
+    mapped_orders
 
-    upload_to_google_drive(io)
+    GoogleDriveService.new.append_orders(line_items)
     change_status_fulfilled(fulfilled_orders)
     OrderMailer.with(orders: fulfilled_orders.map(&:order_id), items: fulfilled_items, automatically_fulfilled: true).orders_report_email.deliver_now
   end
@@ -61,10 +61,6 @@ class FetchAndStoreOrdersService
 
   private
 
-  def upload_to_google_drive(io)
-    GoogleDriveService.new.upload_addresses(io)
-  end
-
   def connection
     api_url_base = 'https://api.squarespace.com'
 
@@ -96,7 +92,7 @@ class FetchAndStoreOrdersService
     business_name = ''
     [order['id'].to_s[0...20],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['sku'],item['quantity'],order['customerEmail'],address['phone']].map do |value|
       value ? value.to_s[0...70].gsub(',', '') : ''
-    end.join(',') + "\n"
+    end
   end
 
 end

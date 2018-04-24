@@ -19,8 +19,14 @@ class GoogleDriveService
   end
 
   def upload_addresses(io)
-    # ws = session.spreadsheet_by_key("pz7XtlQC-PYx-jrVMJErTcg").worksheets[0].num_row
     file = session.file_by_title(ENV['FILE_NAME'])
     file.update_from_io(io)
+  end
+
+  def append_orders(line_items)
+    ws = session.spreadsheet_by_key(ENV['SPREADSHEET_KEY']).worksheets[0]
+    last_row = ws.num_rows
+    ws.insert_rows(last_row + 1, line_items)
+    ws.save
   end
 end
