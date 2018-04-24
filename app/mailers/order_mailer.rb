@@ -1,5 +1,5 @@
 class OrderMailer < ApplicationMailer
-  default cc: -> { 'kristina.frey.frey@gmail.com', 'dan.r.eils@gmail.com' }
+  default cc: -> { ['kristina.frey.frey@gmail.com', 'dan.r.eils@gmail.com'] }
 
   def orders_report_email
     @orders = Orders.where(order_id: params[:orders])
