@@ -2,9 +2,11 @@ class FetchAndStoreOrdersService
   attr_accessor :fulfilled_orders, :fulfilled_items
 
   BOOK_SKUS = [
-    'SQ7518949',
-    'SQ5328310',
-    'SQ4268897'
+    'CRC',
+    'EBE',
+    'PBHB',
+    'DCB',
+    'DCBP'
   ]
 
   def initialize
