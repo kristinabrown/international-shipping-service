@@ -16,7 +16,7 @@ class FetchAndStoreOrdersService
 
   def fetch_and_send_orders
     line_items = []
-    mapped_orders = pending_international_orders.each do |order|
+    pending_international_orders.each do |order|
       if order['lineItems'].map { |li| li["sku"] }.uniq - BOOK_SKUS == []
         order['lineItems'].map do |item|
           line_items << order_row(order, item) if BOOK_SKUS.include?(item["sku"])
@@ -26,7 +26,6 @@ class FetchAndStoreOrdersService
         fulfilled_orders << order_object
       end
     end
-    mapped_orders
 
     GoogleDriveService.new.append_orders(line_items)
     change_status_fulfilled(fulfilled_orders)
@@ -98,4 +97,3 @@ class FetchAndStoreOrdersService
   end
 
 end
-# 5abbb67c03ce649f5bbd141d
