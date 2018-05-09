@@ -5,8 +5,11 @@ class FetchAndStoreOrdersService
     'CRC',
     'EBE',
     'PBHB',
-    'DCB',
-    'DCBP'
+    'DCB'
+  ]
+
+  POSTER_SKU = [
+   'DCBP'
   ]
 
   def initialize
@@ -16,11 +19,16 @@ class FetchAndStoreOrdersService
 
   def fetch_and_send_orders
     line_items = []
+    posters_not_sent = []
     pending_international_orders.each do |order|
-      if order['lineItems'].map { |li| li["sku"] }.uniq - BOOK_SKUS == []
+      if order['lineItems'].map { |li| li["sku"] }.uniq - (BOOK_SKUS + POSTER_SKU) == []
         order['lineItems'].map do |item|
-          line_items << order_row(order, item) if BOOK_SKUS.include?(item["sku"])
-          fulfilled_items << [item['productId'], item['productName']]
+          if BOOK_SKUS.include?(item["sku"])
+            line_items << order_row(order, item)
+            fulfilled_items << [item['productId'], item['productName']]
+          else
+            posters_not_sent << [order['id'], item['productName']]
+          end
         end
         order_object = Order.create(order_id: order['id'], items: order['lineItems'], uploaded_at: Time.current)
         fulfilled_orders << order_object
@@ -29,7 +37,7 @@ class FetchAndStoreOrdersService
 
     GoogleDriveService.new.append_orders(line_items)
     change_status_fulfilled(fulfilled_orders)
-    OrderMailer.with(orders: fulfilled_orders.map(&:order_id), items: fulfilled_items, automatically_fulfilled: true).orders_report_email.deliver_now
+    OrderMailer.with(orders: fulfilled_orders.map(&:order_id), items: fulfilled_items, posters: posters_not_sent, automatically_fulfilled: true).orders_report_email.deliver_now
   end
 
   def change_status_fulfilled(fo)
