@@ -99,7 +99,7 @@ class FetchAndStoreOrdersService
   def order_row(order, item)
     address = order['shippingAddress']
     business_name = ''
-    [order['id'].to_s[0...20],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['sku'],item['quantity'],order['customerEmail'],address['phone']].map do |value|
+    [order['id'].to_s[4..-1],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['sku'],item['quantity'],order['customerEmail'],address['phone']].map do |value|
       value ? value.to_s[0...70].gsub(',', '') : ''
     end
   end
