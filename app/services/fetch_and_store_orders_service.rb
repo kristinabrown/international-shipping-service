@@ -27,10 +27,10 @@ class FetchAndStoreOrdersService
             line_items << order_row(order, item)
             fulfilled_items << [item['productId'], item['productName']]
           else
-            posters_not_sent << [order['id'], item['productName']]
+            posters_not_sent << [order['orderNumber'], item['productName']]
           end
         end
-        order_object = Order.create(order_id: order['id'], items: order['lineItems'], uploaded_at: Time.current)
+        order_object = Order.create(order_id: order['orderNumber'], items: order['lineItems'], uploaded_at: Time.current)
         fulfilled_orders << order_object
       end
     end
@@ -99,7 +99,7 @@ class FetchAndStoreOrdersService
   def order_row(order, item)
     address = order['shippingAddress']
     business_name = ''
-    [order['id'].to_s[4..-1],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['sku'],item['quantity'],order['customerEmail'],address['phone']].map do |value|
+    [order['orderNumber'],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['sku'],item['quantity'],order['customerEmail'],address['phone']].map do |value|
       value ? value.to_s[0...70].gsub(',', '') : ''
     end
   end
