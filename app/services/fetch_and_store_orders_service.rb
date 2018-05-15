@@ -30,7 +30,7 @@ class FetchAndStoreOrdersService
             posters_not_sent << [order['orderNumber'], item['productName']]
           end
         end
-        order_object = Order.create(order_id: order['orderNumber'], items: order['lineItems'], uploaded_at: Time.current)
+        order_object = Order.create(order_id: order['id'], order_number: order['orderNumber'], items: order['lineItems'], uploaded_at: Time.current)
         fulfilled_orders << order_object
       end
     end

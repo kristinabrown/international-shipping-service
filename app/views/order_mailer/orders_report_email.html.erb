@@ -8,7 +8,7 @@
     <p>
       <h2>Order count: <%= @orders.count %></h2><br>
       <h3>Order ids:</h3> <% @orders.each do |o| %>
-      <p><%= o.order_id %>   marked fulfilled: <%= o.fulfilled_at.present? %></p>
+      <p><%= o.order_number %>   marked fulfilled: <%= o.fulfilled_at.present? %></p>
       -----
       <% end %>
     </p>
