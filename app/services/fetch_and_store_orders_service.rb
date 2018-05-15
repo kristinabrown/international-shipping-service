@@ -100,7 +100,7 @@ class FetchAndStoreOrdersService
     address = order['shippingAddress']
     business_name = ''
     [order['orderNumber'],business_name,"#{address['firstName']} #{address['lastName']}",address['address1'],address['address2'],address['postalCode'],address['city'],address['state'],address['countryCode'],item['sku'],item['quantity'],order['customerEmail'],address['phone']].map do |value|
-      value ? value.to_s[0...70].gsub(',', '') : ''
+      value ? value.to_s[0...70].gsub(',', ' ') : ''
     end
   end
 
