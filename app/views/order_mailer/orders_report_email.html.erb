@@ -25,5 +25,12 @@
       <p>order_id: <%= i[0] %>---> name: <%= i[1] %></p>
       <% end %>
     </p>
+    <p>
+      <h2>Orders Already Uploaded To Heftwerk and so were skipped: <bold><%= @orders_already_uploaded.count %></bold></h2><br>
+      <h3>already uploaded orders:</h3>
+      <% @orders_already_uploaded.each do |o| %>
+      <p>order_number: <%= o.order_number %> ---> uploaded_at: <%= o.uploaded_at %></p>
+      <% end %>
+    </p>
   </body>
 </html>
