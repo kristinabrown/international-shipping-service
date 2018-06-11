@@ -14,6 +14,7 @@ class GoogleDriveService
           )
 
     credentials.refresh_token = ENV['REFRESH_TOKEN']
+
     credentials.fetch_access_token!
     @session = GoogleDrive::Session.new(credentials)
   end
