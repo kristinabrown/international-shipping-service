@@ -147,6 +147,7 @@ class FetchAndStoreOrdersService
                      posters: posters_not_sent,
                      orders_already_uploaded: orders_already_uploaded.map(&:order_id))
                      .orders_report_email.deliver_now
+   rescue Net::SMTPAuthenticationError
   end
 
 end
