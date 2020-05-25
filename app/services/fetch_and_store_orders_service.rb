@@ -27,8 +27,16 @@ class FetchAndStoreOrdersService
     @orders_already_uploaded = []
   end
 
-  def fetch_and_send_orders
-    pending_international_orders.each do |order|
+  def fetch_and_send_orders(next_cursor: nil)
+
+    orders = orders_body(next_cursor: next_cursor)
+    next_cursor = nil
+
+    if orders['pagination']['hasNextPage']
+      next_cursor = orders["pagination"]["nextPageCursor"]
+    end
+
+    pending_international_orders(orders['result']).each do |order|
       if order['lineItems'].map { |li| li["sku"] }.uniq - (BOOK_SKUS + POSTER_SKU) == []
         order_record = Order.find_or_initialize_by(order_number: order['orderNumber'])
 
@@ -56,6 +64,10 @@ class FetchAndStoreOrdersService
     GoogleDriveService.new.append_orders(line_items)
     change_status_fulfilled(fulfilled_orders)
     send_email
+
+    if next_cursor.present?
+      fetch_and_send_orders(next_cursor: next_cursor)
+    end
   end
 
   def change_status_fulfilled(fo)
@@ -96,20 +108,25 @@ class FetchAndStoreOrdersService
     Faraday.new(api_url_base)
   end
 
-  def orders
+  def orders_body(next_cursor: nil)
     api_token = ENV['SQUARE_SPACE_TOKEN']
 
+    url = '1.0/commerce/orders?fulfillmentStatus=PENDING'
+
+    if next_cursor.present?
+      url = url + "&cursor=#{next_cursor}"
+    end
+
     response = connection.get do |req|
-      req.url '1.0/commerce/orders'
-      req.params['fulfillmentStatus'] = 'PENDING'
+      req.url url
       req.headers['Content-Type'] = 'application/json'
       req.headers['Authorization'] = "Bearer #{api_token}"
     end
 
-    JSON.parse(response.body)["result"]
+    JSON.parse(response.body)
   end
 
-  def pending_international_orders
+  def pending_international_orders(orders)
     orders.select do |o|
       o["shippingAddress"]["countryCode"] != 'US' &&
       o["fulfillmentStatus"] == "PENDING"
