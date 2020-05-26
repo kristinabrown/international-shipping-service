@@ -31,6 +31,11 @@ class FetchAndStoreOrdersService
 
     orders = orders_body(next_cursor: next_cursor)
     next_cursor = nil
+    fulfilled_orders = []
+    fulfilled_items = []
+    line_items = []
+    orders_already_uploaded = []
+    posters_not_sent = []
 
     if orders['pagination']['hasNextPage']
       next_cursor = orders["pagination"]["nextPageCursor"]
