@@ -1,7 +1,6 @@
 class FetchAndStoreOrdersService
   attr_accessor :fulfilled_orders,
                 :fulfilled_items,
-                :line_items,
                 :posters_not_sent,
                 :orders_already_uploaded
 
@@ -22,7 +21,6 @@ class FetchAndStoreOrdersService
   def initialize
     @fulfilled_orders = []
     @fulfilled_items = []
-    @line_items = []
     @posters_not_sent = []
     @orders_already_uploaded = []
   end
@@ -31,11 +29,7 @@ class FetchAndStoreOrdersService
 
     orders = orders_body(next_cursor: next_cursor)
     next_cursor = nil
-    fulfilled_orders = []
-    fulfilled_items = []
     line_items = []
-    orders_already_uploaded = []
-    posters_not_sent = []
 
     if orders['pagination']['hasNextPage']
       next_cursor = orders["pagination"]["nextPageCursor"]
@@ -67,11 +61,12 @@ class FetchAndStoreOrdersService
     end
 
     GoogleDriveService.new.append_orders(line_items)
-    change_status_fulfilled(fulfilled_orders)
-    send_email
 
     if next_cursor.present?
       fetch_and_send_orders(next_cursor: next_cursor)
+    else
+      change_status_fulfilled(fulfilled_orders)
+      send_email
     end
   end
 
@@ -154,5 +149,4 @@ class FetchAndStoreOrdersService
                      .orders_report_email.deliver_now
    rescue Net::SMTPAuthenticationError
   end
-
 end
