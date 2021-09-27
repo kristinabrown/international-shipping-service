@@ -37,27 +37,25 @@ class FetchAndStoreOrdersService
     end
 
     pending_international_orders(orders['result']).each do |order|
-      if order['lineItems'].map { |li| li["sku"] }.uniq - (BOOK_SKUS + POSTER_SKU) == []
-        order_record = Order.find_or_initialize_by(order_number: order['orderNumber'])
+      order_record = Order.find_or_initialize_by(order_number: order['orderNumber'])
 
-        if order_record.uploaded_at.present?
-          orders_already_uploaded << order_record
-          next
-        else
-          order_record.update(order_id: order['id'], items: order['lineItems'])
+      if order_record.uploaded_at.present?
+        orders_already_uploaded << order_record
+        next
+      else
+        order_record.update(order_id: order['id'], items: order['lineItems'])
 
-          order['lineItems'].map do |item|
-            if BOOK_SKUS.include?(item['sku'])
-              line_items << order_row(order, item)
-              fulfilled_items << [item['productId'], item['productName']]
-            else
-              posters_not_sent << [order_record.order_number, item['productName']]
-              order_record.update(contains_poster: true)
-            end
+        order['lineItems'].map do |item|
+          if BOOK_SKUS.include?(item['sku'])
+            line_items << order_row(order, item)
+            fulfilled_items << [item['productId'], item['productName']]
+          else
+            posters_not_sent << [order_record.order_number, item['productName']]
+            order_record.update(contains_poster: true)
           end
-          order_record.update(uploaded_at: Time.current)
-          fulfilled_orders << order_record
         end
+        order_record.update(uploaded_at: Time.current)
+        fulfilled_orders << order_record
       end
     end
 
