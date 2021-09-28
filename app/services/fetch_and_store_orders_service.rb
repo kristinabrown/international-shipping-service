@@ -51,7 +51,9 @@ class FetchAndStoreOrdersService
             fulfilled_items << [item['productId'], item['productName']]
           else
             posters_not_sent << [order_record.order_number, item['productName']]
-            order_record.update(contains_poster: true)
+            if POSTER_SKU.include?(item['sku'])
+              order_record.update(contains_poster: true)
+            end
           end
         end
         order_record.update(uploaded_at: Time.current)
