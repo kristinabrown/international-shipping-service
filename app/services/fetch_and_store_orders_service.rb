@@ -127,8 +127,10 @@ class FetchAndStoreOrdersService
 
   def pending_international_orders(orders)
     orders.select do |o|
-      o["shippingAddress"]["countryCode"] != 'US' &&
-      o["fulfillmentStatus"] == "PENDING"
+      if o["shippingAddress"]
+        o["shippingAddress"]["countryCode"] != 'US' &&
+        o["fulfillmentStatus"] == "PENDING"
+      end
     end
   end
 
