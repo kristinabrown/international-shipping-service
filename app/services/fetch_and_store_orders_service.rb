@@ -20,7 +20,8 @@ class FetchAndStoreOrdersService
     'BHR',
     'BHT',
     'BHTB',
-    'LWD'
+    'LWD',
+    'TERR'
   ]
 
   POSTER_SKU = [
