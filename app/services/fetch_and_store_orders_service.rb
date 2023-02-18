@@ -123,8 +123,10 @@ class FetchAndStoreOrdersService
 
     url = '1.0/commerce/orders?fulfillmentStatus=PENDING'
 
+
     if next_cursor.present?
-      url = url + "&cursor=#{next_cursor}"
+      url = '1.0/commerce/orders'
+      url = url + "?cursor=#{next_cursor}"
     end
 
     response = connection.get do |req|
