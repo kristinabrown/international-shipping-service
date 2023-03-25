@@ -21,11 +21,15 @@ class FetchAndStoreOrdersService
     'BHT',
     'BHTB',
     'LWD',
-    'TERR'
+    'TERR',
+    '2LCB',
+    '2LCBH'
   ]
 
   POSTER_SKU = [
-   'DCBP'
+   'DCBP',
+   'SQ1993816',
+   'SQ3719515'
   ]
 
   def initialize
