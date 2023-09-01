@@ -23,7 +23,9 @@ class FetchAndStoreOrdersService
     'LWD',
     'TERR',
     '2LCB',
-    '2LCBH'
+    '2LCBH',
+    'NLPW',
+    'NLPB'
   ]
 
   POSTER_SKU = [
