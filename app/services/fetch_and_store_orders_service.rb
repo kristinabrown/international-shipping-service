@@ -25,7 +25,8 @@ class FetchAndStoreOrdersService
     '2LCB',
     '2LCBH',
     'NLPW',
-    'NLPB'
+    'NLPB',
+    'NLF'
   ]
 
   POSTER_SKU = [
