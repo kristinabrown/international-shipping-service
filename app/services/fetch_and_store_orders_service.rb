@@ -26,7 +26,9 @@ class FetchAndStoreOrdersService
     '2LCBH',
     'NLPW',
     'NLPB',
-    'NLF'
+    'NLF',
+    'BHAC',
+    'BOSC'
   ]
 
   POSTER_SKU = [
@@ -101,7 +103,7 @@ class FetchAndStoreOrdersService
           "carrierName": 'Heftwerk',
           "service": "standard",
           "shipDate": "#{Time.now.utc.iso8601}",
-          "trackingNumber": '123',
+          "trackingNumber": 'Shipment Info Sent When Available',
           "trackingUrl": nil
         }
 
