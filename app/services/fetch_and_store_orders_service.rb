@@ -28,7 +28,8 @@ class FetchAndStoreOrdersService
     'NLPB',
     'NLF',
     'BHAC',
-    'BOSC'
+    'BOSC',
+    'BHCBB'
   ]
 
   POSTER_SKU = [
