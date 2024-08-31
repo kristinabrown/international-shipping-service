@@ -34,7 +34,8 @@ class FetchAndStoreOrdersService
     'F3P',
     'ACRP',
     'Kinto300',
-    'HOOP'
+    'HOOP',
+    '62F'
   ]
 
   POSTER_SKU = [
