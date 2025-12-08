@@ -41,6 +41,8 @@ class FetchAndStoreOrdersService
     'PMBLUE',
     'PMWHITE',
     'PMF',
+    'WFC',
+    'GCB'
   ]
 
   POSTER_SKU = [
