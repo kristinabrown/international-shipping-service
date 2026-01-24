@@ -46,6 +46,8 @@ class FetchAndStoreOrdersService
     'HOOPBLACK',
     'HOOPPINK',
     'HOOPBLUE',
+    'SUBSCALE',
+    'HOOPADAPT',
   ]
 
   POSTER_SKU = [
