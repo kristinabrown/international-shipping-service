@@ -47,7 +47,11 @@ class FetchAndStoreOrdersService
     'HOOPPINK',
     'HOOPBLUE',
     'SUBSCALE',
-    'HOOPADAPT',
+    'SPACER',
+    'KONFLUX100',
+    'KONFLUX20',
+    'APAXCORE100',
+    'APAXCORE20'
   ]
 
   POSTER_SKU = [
