@@ -52,6 +52,8 @@ class FetchAndStoreOrdersService
     'KONFLUX20',
     'APAXCORE100',
     'APAXCORE20'
+    'SQMAY2026ONLINE',
+    'SQBRUSSELS'
   ]
 
   POSTER_SKU = [
