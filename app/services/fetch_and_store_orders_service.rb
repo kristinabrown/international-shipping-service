@@ -51,7 +51,7 @@ class FetchAndStoreOrdersService
     'KONFLUX100',
     'KONFLUX20',
     'APAXCORE100',
-    'APAXCORE20'
+    'APAXCORE20',
     'SQMAY2026ONLINE',
     'SQBRUSSELS'
   ]
