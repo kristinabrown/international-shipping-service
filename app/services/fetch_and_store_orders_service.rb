@@ -53,7 +53,20 @@ class FetchAndStoreOrdersService
     'APAXCORE100',
     'APAXCORE20',
     'SQMAY2026ONLINE',
-    'SQBRUSSELS'
+    'SQBRUSSELS',
+    'AFV60WHITE',
+    'AFV60GREEN',
+    'AFV60BLACK',
+    'AF360ML',
+    'AF600ML',
+    'AFRINGBLACK',
+    'AFRINGSS',
+    'AFTAMPERGREEN',
+    'AFTAMPERBLACK',
+    'AFSCALEBLACK',
+    'AFSCALEGREEN',
+    'AFSCALEWHITE',
+    'AFPORTAFILTER',
   ]
 
   POSTER_SKU = [
