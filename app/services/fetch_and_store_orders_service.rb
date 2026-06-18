@@ -67,6 +67,10 @@ class FetchAndStoreOrdersService
     'AFSCALEGREEN',
     'AFSCALEWHITE',
     'AFPORTAFILTER',
+    'BVSMOKE',
+    'BVAMBER',
+    'AF62',
+    'AF58',
   ]
 
   POSTER_SKU = [
